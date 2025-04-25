@@ -49,27 +49,31 @@ pipeline {
     environment {
         GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
         GIT_USER_NAME = "Jammedat"
-        GIT_BRANCH = "main"  // Explicitly define the branch
+        GIT_BRANCH = "main"
     }
     steps {
         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
             sh '''
                 # Configure Git
                 git config user.email "susilkhadka503@gmail.com"
-                git config user.name "Jammedat"
+                git config user.name "$GIT_USER_NAME"
                 
-                # Switch from detached HEAD to proper branch
-                git checkout -B ${GIT_BRANCH}
+                # Ensure we're on the correct branch
+                git checkout -B $GIT_BRANCH
                 
-                # Update deployment file
-                sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                
-                # Commit changes
+                # Replace placeholder with dynamic image tag
+                sed -i "s/replaceImageTag/$BUILD_NUMBER/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+
+                # Stage the deployment file
                 git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                
-                # Push changes
-                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git ${GIT_BRANCH}
+
+                # Only commit and push if there are actual changes
+                if git diff --cached --quiet; then
+                    echo "No changes to commit for image tag $BUILD_NUMBER."
+                else
+                    git commit -m "Update deployment image to version $BUILD_NUMBER"
+                    git push https://$GITHUB_TOKEN@github.com/$GIT_USER_NAME/$GIT_REPO_NAME.git $GIT_BRANCH
+                fi
             '''
             }
         }
