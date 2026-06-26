@@ -26,7 +26,7 @@ pipeline {
 
         stage('Package') {
             steps {
-                sh 'echo Packaging artifact'
+                sh 'echo Packaging artifact !!!'
             }
         }
 
