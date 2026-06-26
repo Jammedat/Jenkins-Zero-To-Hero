@@ -1,10 +1,28 @@
 pipeline {
     agent any
+
     stages {
+
         stage('Welcome') {
             steps {
-                echo "heloo from jenkins!"
+                echo 'Pipeline started'
             }
         }
+
+        stage('Environment') {
+            steps {
+                sh 'pwd'
+                sh 'whoami'
+                sh 'hostname'
+                sh 'ls -la'
+            }
+        }
+
+        stage('Finished') {
+            steps {
+                echo 'Pipeline completed'
+            }
+        }
+
     }
 }
