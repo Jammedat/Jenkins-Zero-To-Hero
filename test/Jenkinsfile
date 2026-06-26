@@ -1,28 +1,51 @@
 pipeline {
+
     agent any
 
     stages {
 
-        stage('Welcome') {
+        stage('Checkout') {
             steps {
-                echo 'Pipeline started'
+                echo "Repository cloned automatically"
             }
         }
 
-        stage('Environment') {
+        stage('Build') {
             steps {
-                sh 'pwd'
-                sh 'whoami'
-                sh 'hostname'
-                sh 'ls -la'
+                sh 'echo Building application'
+                sh 'sleep 5'
             }
         }
 
-        stage('Finished') {
+        stage('Test') {
             steps {
-                echo 'Pipeline completed'
+                sh 'echo Running tests'
+                sh 'sleep 3'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'echo Packaging artifact'
             }
         }
 
     }
+
+    post {
+
+        always {
+            echo "Pipeline Finished"
+        }
+
+        success {
+            echo "SUCCESS"
+        }
+
+        failure {
+            echo "FAILED"
+        }
+
+    }
+
 }
