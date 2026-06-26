@@ -12,7 +12,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'echo Building application'
+                sh 'this thing does not even exist'
                 sh 'sleep 5'
             }
         }
